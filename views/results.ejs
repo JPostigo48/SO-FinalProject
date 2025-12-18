@@ -1,0 +1,181 @@
+<% const entradas = data.procesos_entrada; %>
+
+<!-- Dashboard grid: left column for input and metrics; right column for tables/Gantt -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+  <!-- Left card: input summary -->
+  <div class="bg-white p-4 shadow rounded col-span-1">
+    <h3 class="text-xl font-semibold mb-2">Procesos capturados (<%= entradas.length %>)</h3>
+    <p class="text-sm text-gray-600 mb-2">Los procesos se muestran en el orden en que fueron detectados. La ráfaga observada corresponde al incremento de tiempo de CPU en el intervalo de muestreo.</p>
+    <div class="overflow-x-auto max-h-64 overflow-y-auto">
+      <table class="min-w-full text-sm text-left">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="py-1 px-2">PID</th>
+            <th class="py-1 px-2">Nombre</th>
+            <th class="py-1 px-2">t_llegada</th>
+            <th class="py-1 px-2">utime</th>
+            <th class="py-1 px-2">stime</th>
+            <th class="py-1 px-2">cpu_total</th>
+            <th class="py-1 px-2">burst_obs</th>
+            <th class="py-1 px-2">muestras</th>
+            <th class="py-1 px-2">estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% entradas.forEach(proc => { %>
+          <tr class="border-b">
+            <td class="py-1 px-2 whitespace-nowrap"><%= proc.pid %></td>
+            <td class="py-1 px-2 whitespace-nowrap"><%= proc.nombre %></td>
+            <td class="py-1 px-2"><%= proc.t_llegada %></td>
+            <td class="py-1 px-2"><%= proc.utime %></td>
+            <td class="py-1 px-2"><%= proc.stime %></td>
+            <td class="py-1 px-2"><%= proc.cpu_total %></td>
+            <td class="py-1 px-2"><%= proc.burst_obs %></td>
+            <td class="py-1 px-2"><%= proc.muestras %></td>
+            <td class="py-1 px-2"><%= proc.estado %></td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Right side: two subcolumns for metrics/table and gantt -->
+  <div class="col-span-1 md:col-span-2 grid grid-rows-2 gap-4">
+    <!-- Row 1: two cards (metrics + process table) -->
+    <div class="grid grid-cols-2 gap-4">
+      <!-- Metrics card (RR / SRTF toggled) -->
+      <div class="bg-white p-4 shadow rounded">
+        <div class="vista vistaRR" class="vista">
+          <h3 class="text-lg font-semibold mb-2">Métricas Round&nbsp;Robin (Quantum <%= quantum %>)</h3>
+          <% const m = data.rr.metricas; %>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li>Tiempo de espera promedio: <%= m.espera_promedio.toFixed(2) %></li>
+            <li>Tiempo de retorno (turnaround) promedio: <%= m.turnaround_promedio.toFixed(2) %></li>
+            <li>Tiempo de finalización total: <%= m.finalizacion_total %></li>
+            <li>Throughput: <%= m.throughput.toFixed(2) %> procesos/unidad</li>
+            <li>Tiempo de respuesta promedio: <%= m.respuesta_promedio.toFixed(2) %></li>
+            <li>Nº de cambios de contexto: <%= m.context_switches %></li>
+            <li>CPU idle time: <%= m.cpu_idle_time %></li>
+          </ul>
+        </div>
+        <div class="vista vistaSRTF" class="vista">
+          <h3 class="text-lg font-semibold mb-2">Métricas SRTF</h3>
+          <% const ms = data.srtf.metricas; %>
+          <ul class="list-disc list-inside text-sm space-y-1">
+            <li>Tiempo de espera promedio: <%= ms.espera_promedio.toFixed(2) %></li>
+            <li>Tiempo de retorno (turnaround) promedio: <%= ms.turnaround_promedio.toFixed(2) %></li>
+            <li>Tiempo de finalización total: <%= ms.finalizacion_total %></li>
+            <li>Throughput: <%= ms.throughput.toFixed(2) %> procesos/unidad</li>
+            <li>Tiempo de respuesta promedio: <%= ms.respuesta_promedio.toFixed(2) %></li>
+            <li>Nº de cambios de contexto: <%= ms.context_switches %></li>
+            <li>CPU idle time: <%= ms.cpu_idle_time %></li>
+          </ul>
+        </div>
+      </div>
+      <!-- Output processes card -->
+      <div class="bg-white p-4 shadow rounded overflow-x-auto">
+        <div class="vista vistaRR" class="vista">
+          <h3 class="text-lg font-semibold mb-2">Procesos finales RR</h3>
+          <table class="min-w-full text-sm text-left">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="py-1 px-2">PID</th>
+                <th class="py-1 px-2">Nombre</th>
+                <th class="py-1 px-2">t_inicio</th>
+                <th class="py-1 px-2">t_fin</th>
+                <th class="py-1 px-2">turnaround</th>
+                <th class="py-1 px-2">waiting</th>
+                <th class="py-1 px-2">response</th>
+                <th class="py-1 px-2">contextos</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% data.rr.procesos_salida.forEach(p => { %>
+              <tr class="border-b">
+                <td class="py-1 px-2 whitespace-nowrap"><%= p.pid %></td>
+                <td class="py-1 px-2 whitespace-nowrap"><%= p.nombre %></td>
+                <td class="py-1 px-2"><%= p.t_inicio %></td>
+                <td class="py-1 px-2"><%= p.t_fin %></td>
+                <td class="py-1 px-2"><%= p.turnaround %></td>
+                <td class="py-1 px-2"><%= p.waiting_time %></td>
+                <td class="py-1 px-2"><%= p.response_time %></td>
+                <td class="py-1 px-2"><%= p.n_contextos %></td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+        <div class="vista vistaSRTF" class="vista">
+          <h3 class="text-lg font-semibold mb-2">Procesos finales SRTF</h3>
+          <table class="min-w-full text-sm text-left">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="py-1 px-2">PID</th>
+                <th class="py-1 px-2">Nombre</th>
+                <th class="py-1 px-2">t_inicio</th>
+                <th class="py-1 px-2">t_fin</th>
+                <th class="py-1 px-2">turnaround</th>
+                <th class="py-1 px-2">waiting</th>
+                <th class="py-1 px-2">response</th>
+                <th class="py-1 px-2">contextos</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% data.srtf.procesos_salida.forEach(p => { %>
+              <tr class="border-b">
+                <td class="py-1 px-2 whitespace-nowrap"><%= p.pid %></td>
+                <td class="py-1 px-2 whitespace-nowrap"><%= p.nombre %></td>
+                <td class="py-1 px-2"><%= p.t_inicio %></td>
+                <td class="py-1 px-2"><%= p.t_fin %></td>
+                <td class="py-1 px-2"><%= p.turnaround %></td>
+                <td class="py-1 px-2"><%= p.waiting_time %></td>
+                <td class="py-1 px-2"><%= p.response_time %></td>
+                <td class="py-1 px-2"><%= p.n_contextos %></td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- Row 2: Gantt chart card -->
+    <div class="bg-white p-4 shadow rounded col-span-2 overflow-x-auto">
+      <div class="vista vistaRR" class="vista">
+        <h3 class="text-lg font-semibold mb-2">Diagrama de Gantt Round&nbsp;Robin</h3>
+        <% const tlRR = data.rr.timeline; %>
+        <% // Compute width scale; find total time %>
+        <% const totalRR = tlRR.length > 0 ? tlRR[tlRR.length - 1].fin : 0; %>
+        <div class="relative border h-12 w-full overflow-x-auto" style="min-width: <%= totalRR * 15 %>px;">
+          <% let lastX = 0; %>
+          <% tlRR.forEach(seg => { %>
+          <div
+            class="absolute top-0 h-12 flex items-center justify-center text-xs text-white"
+            style="left: <%= seg.inicio * 15 %>px; width: <%= (seg.fin - seg.inicio) * 15 %>px; background-color: rgb(<%= (seg.pid * 47) % 200 % 255 % 150 + 50 %>, <%= (seg.pid * 83) % 200 % 150 + 50 %>, <%= (seg.pid * 23) % 200 % 150 + 50 %>); border-right: 1px solid #fff;">
+            <%= seg.pid %>
+          </div>
+          <% }); %>
+        </div>
+      </div>
+      <div class="vista vistaSRTF" class="vista">
+        <h3 class="text-lg font-semibold mb-2">Diagrama de Gantt SRTF</h3>
+        <% const tlS = data.srtf.timeline; %>
+        <% const totalS = tlS.length > 0 ? tlS[tlS.length - 1].fin : 0; %>
+        <div class="relative border h-12 w-full overflow-x-auto" style="min-width: <%= totalS * 15 %>px;">
+          <% tlS.forEach(seg => { %>
+          <div
+            class="absolute top-0 h-12 flex items-center justify-center text-xs text-white"
+            style="left: <%= seg.inicio * 15 %>px; width: <%= (seg.fin - seg.inicio) * 15 %>px; background-color: rgb(<%= (seg.pid * 47) % 200 % 150 + 50 %>, <%= (seg.pid * 83) % 200 % 150 + 50 %>, <%= (seg.pid * 23) % 200 % 150 + 50 %>); border-right: 1px solid #fff;">
+            <%= seg.pid %>
+          </div>
+          <% }); %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Hide SRTF view initially via JS */
+  .vista { display: none; }
+</style>

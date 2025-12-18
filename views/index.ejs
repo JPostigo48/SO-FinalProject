@@ -1,0 +1,17 @@
+<div class="max-w-3xl mx-auto bg-white shadow-md rounded p-6">
+  <h2 class="text-2xl font-semibold mb-4">Simulación de Planificadores de CPU</h2>
+  <p class="mb-4">Ingrese la cantidad de procesos a recolectar y el quantum (solo aplica a Round&nbsp;Robin). La recolección se hace sobre los procesos reales del sistema.</p>
+  <form method="POST" action="/simulate" class="space-y-4">
+    <div>
+      <label for="numProcs" class="block font-medium mb-1">Cantidad de procesos a recolectar:</label>
+      <input type="number" id="numProcs" name="numProcs" min="1" value="10" class="w-full p-2 border rounded" required />
+    </div>
+    <div>
+      <label for="quantum" class="block font-medium mb-1">Quantum de Round&nbsp;Robin (por defecto 10):</label>
+      <input type="number" id="quantum" name="quantum" min="1" value="10" class="w-full p-2 border rounded" />
+    </div>
+    <div>
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Iniciar Simulación</button>
+    </div>
+  </form>
+</div>

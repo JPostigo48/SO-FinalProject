@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistemas Operativos</title>
+    <!-- Tailwind via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-blue-800 text-white p-4 flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <div class="bg-white text-blue-800 font-bold rounded-full w-8 h-8 flex items-center justify-center">SO</div>
+        <span class="font-semibold text-lg">Planificadores de CPU</span>
+      </div>
+      <% if (typeof data !== 'undefined') { %>
+      <div class="flex items-center space-x-4">
+        <button id="btnRR" class="px-3 py-1 rounded bg-blue-600 hover:bg-blue-700" onclick="mostrarRR()">Round&nbsp;Robin</button>
+        <button id="btnSRTF" class="px-3 py-1 rounded bg-blue-600 hover:bg-blue-700" onclick="mostrarSRTF()">SRTF</button>
+      </div>
+      <% } %>
+    </nav>
+    <!-- Main content -->
+    <div class="container mx-auto p-4">
+      <% if (error) { %>
+      <div class="bg-red-200 text-red-800 p-3 rounded mb-4"><%= error %></div>
+      <% } %>
+      <%- body %>
+    </div>
+    <% if (typeof data !== 'undefined') { %>
+    <script>
+      function mostrarRR() {
+        document.querySelectorAll('.vistaRR').forEach(el => el.style.display = 'block');
+        document.querySelectorAll('.vistaSRTF').forEach(el => el.style.display = 'none');
+        document.getElementById('btnRR').classList.add('bg-blue-700');
+        document.getElementById('btnSRTF').classList.remove('bg-blue-700');
+      }
+
+      function mostrarSRTF() {
+        document.querySelectorAll('.vistaRR').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.vistaSRTF').forEach(el => el.style.display = 'block');
+        document.getElementById('btnRR').classList.remove('bg-blue-700');
+        document.getElementById('btnSRTF').classList.add('bg-blue-700');
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        mostrarRR();
+      });
+    </script>
+    <% } %>
+  </body>
+</html>
