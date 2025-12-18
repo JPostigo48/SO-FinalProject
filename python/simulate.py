@@ -45,7 +45,7 @@ def parse_stat_file(pid: str) -> Tuple[str, int, int, str]:
         raise
 
 
-def sample_processes(num_procs: int, sample_interval: float = 0.1) -> List[Task]:
+def sample_processes(num_procs: int, sample_interval: float = 0.3) -> List[Task]:
     tasks: List[Task] = []
     observed: Dict[int, Tuple[str, int, int, str]] = {}
     arrival_index: Dict[int, int] = {}
