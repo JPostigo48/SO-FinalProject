@@ -1,8 +1,6 @@
 <% const entradas = data.procesos_entrada; %>
 
-<!-- Dashboard grid: left column for input and metrics; right column for tables/Gantt -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-  <!-- Left card: input summary -->
   <div class="bg-white p-4 shadow rounded col-span-1">
     <h3 class="text-xl font-semibold mb-2">Procesos capturados (<%= entradas.length %>)</h3>
     <p class="text-sm text-gray-600 mb-2">Los procesos se muestran en el orden en que fueron detectados. La ráfaga observada corresponde al incremento de tiempo de CPU en el intervalo de muestreo.</p>
@@ -40,7 +38,6 @@
     </div>
   </div>
 
-  <!-- Right side: two subcolumns for metrics/table and gantt -->
   <div class="col-span-1 md:col-span-2 grid grid-rows-2 gap-4">
     <!-- Row 1: two cards (metrics + process table) -->
     <div class="grid grid-cols-2 gap-4">
@@ -176,6 +173,5 @@
 </div>
 
 <style>
-  /* Hide SRTF view initially via JS */
   .vista { display: none; }
 </style>

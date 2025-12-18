@@ -4,7 +4,6 @@ import expressLayouts from "express-ejs-layouts";
 import path, { join } from 'path';
 import { fileURLToPath } from "url";
 import { spawn } from 'child_process';
-import bp from 'body-parser';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,7 +16,7 @@ app.use(expressLayouts);
 app.set("layout", "layout");
 
 app.use(express.static(join(__dirname, 'public')));
-app.use(bp.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
   res.render('index', { error: null });
@@ -44,15 +43,22 @@ app.post('/simulate', (req, res) => {
     errorOutput += data.toString();
   });
   pythonProcess.on('close', (code) => {
-    if (code !== 0 || errorOutput) {
-      console.error('Error ejecutando el script Python:', errorOutput);
+    if (code !== 0) {
+      console.error('Python exit code:', code);
+      console.error('stderr:', errorOutput);
       return res.render('index', { error: 'Error al ejecutar la simulación. Consulte los logs del servidor.' });
     }
+    if (errorOutput) {
+      console.warn('Python stderr:', errorOutput);
+    }
     try {
+      //console.log("PY STDOUT:\n", output);
+      //console.log("PY STDERR:\n", errorOutput);
       const result = JSON.parse(output);
       res.render('results', {
         data: result,
         quantum: quantum,
+        error: null,
       });
     } catch (err) {
       console.error('Error analizando el JSON:', err);
